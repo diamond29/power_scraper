@@ -1,0 +1,5 @@
+AllCops:
+  Exclude:
+    - 'bin/**/*'
+    - 'power_scraper.gemspec'
+
