@@ -14,21 +14,62 @@ module PowerScraper
     end
 
     def nav_tabs_frame
-      nav_tabs_frame = main.frames.find do |web_frame|
+      nav_frame = main.frames.find do |web_frame|
         web_frame.src == 'navtabs.htm'
       end
 
-      if nav_tabs_frame.nil?
-        fail 'nav tabs frame does not exist at site: #{address}'
+      if nav_frame.nil?
+        fail PowerScraperError,
+             "nav tabs frame does not exist at site: #{address}"
       end
 
-      nav_tabs_frame
+      nav_frame
     end
 
-    def active_table
-      # var = active_tab
+    def active_link
+      link = nav_tabs_frame.content.links.find do |page_link|
+        page_link.text =~ /Active/
+      end
 
-      # binding.pry
+      if link.nil?
+        fail PowerScraperError,
+             "active link cannot be found at site: #{address}"
+      end
+
+      link
+    end
+
+    def active_page
+      page = active_link.click
+
+      if page.nil?
+        fail PowerScraperError,
+             "active page cannot be found at site: #{address}"
+      end
+
+      page
+    end
+
+    def meta_refresh_page
+      page = active_page.meta_refresh.first.click
+
+      if page.nil?
+        fail PowerScraperError,
+             "meta refresh page cannot be found at site: #{address}"
+      end
+
+      page
+    end
+
+    def meter_table_html
+      html = meta_refresh_page.content
+
+      if html.size < 30
+        fail PowerScraperError,
+             "Didn't find a big table at this site: #{address}"
+      end
+
+      html
     end
   end
 end
