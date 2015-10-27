@@ -1,7 +1,7 @@
 require 'power_scraper/site_scraper'
 
 describe PowerScraper::SiteScraper do
-  let(:subject) { PowerScraper::SiteScraper.new ENV['site_address'] }
+  let(:subject) { PowerScraper::SiteScraper.new ENV['SCRAPER_ADDRESS'] }
 
   describe '#main' do
     it 'finds the main page' do
